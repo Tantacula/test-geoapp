@@ -58,18 +58,18 @@ export default {
       this.setBounds({ bounds: { from, to } })
     },
     mapLoaded (mapObject) {
-      const { _southWest: from, _northEast: to } = mapObject.getBounds()
-      this.setBounds({ bounds: { from, to } })
+      const { _southWest: pointSW, _northEast: pointNE } = mapObject.getBounds()
+      this.setBounds({ bounds: { pointSW, pointNE } })
     },
     updatePlacesList: debounce.call(this, function () {
       this.loadPlacesList()
     }, 400),
     async loadPlacesList () {
-      let { from: point1, to: point2 } = this.bounds
+      let { from: pointSW, to: pointNE } = this.bounds
       let { data } = await axios.get('/api/places', {
         params: {
-          point1,
-          point2,
+          pointSW,
+          pointNE,
         },
       })
       // todo: Добавить точки в store
