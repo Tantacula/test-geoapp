@@ -10,6 +10,9 @@
     "standard"
   ],
   "rules": {
-    "vue/max-attributes-per-line": "off"
+    "vue/max-attributes-per-line": "off",
+    "vue/html-closing-bracket-spacing": "off",
+    "comma-dangle": "off",
+    "semi": "off"
   }
 }
