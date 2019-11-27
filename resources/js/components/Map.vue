@@ -7,6 +7,7 @@
           @update:zoom="zoomUpdated"
           @update:center="centerUpdated"
           @update:bounds="boundsUpdated"
+          @ready="mapLoaded"
     >
       <lTileLayer :url="url"/>
     </LMap>
@@ -14,6 +15,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+import { debounce } from 'lodash-es'
 import { mapGetters, mapActions } from 'vuex'
 import { LMap, LTileLayer } from 'vue2-leaflet'
 
@@ -32,7 +35,16 @@ export default {
   computed: mapGetters({
     zoom: 'map/zoom',
     center: 'map/center',
+    bounds: 'map/bounds',
   }),
+
+  watch: {
+    async bounds (val, oldVal) {
+      if (val && 'from' in val && 'to' in val) {
+        this.updatePlacesList(val.from, val.to)
+      }
+    },
+  },
 
   methods: {
     zoomUpdated (zoom) {
@@ -42,12 +54,31 @@ export default {
       this.setCenter({ center })
     },
     boundsUpdated (bounds) {
-      // get points
-      // this.bounds = bounds
+      const { _southWest: from, _northEast: to } = bounds
+      this.setBounds({ bounds: { from, to } })
+    },
+    mapLoaded (mapObject) {
+      const { _southWest: from, _northEast: to } = mapObject.getBounds()
+      this.setBounds({ bounds: { from, to } })
+    },
+    updatePlacesList: debounce.call(this, function () {
+      this.loadPlacesList()
+    }, 400),
+    async loadPlacesList () {
+      let { from: point1, to: point2 } = this.bounds
+      let { data } = await axios.get('/api/places', {
+        params: {
+          point1,
+          point2,
+        },
+      })
+      // todo: Добавить точки в store
+      console.log(data)
     },
     ...mapActions({
       setZoom: 'map/setZoom',
       setCenter: 'map/setCenter',
+      setBounds: 'map/setBounds',
     }),
   },
 }

@@ -14,11 +14,13 @@ if (supportsStorage && localStorage.getItem('map_center')) {
 export const state = {
   zoom,
   center,
+  bounds: [],
 }
 
 export const getters = {
   zoom: state => state.zoom,
   center: state => state.center,
+  bounds: state => state.bounds,
 }
 
 export const mutations = {
@@ -27,6 +29,9 @@ export const mutations = {
   },
   SET_CENTER (state, { center }) {
     state.center = center
+  },
+  SET_BOUNDS (state, { bounds }) {
+    state.bounds = bounds
   },
 }
 
@@ -42,5 +47,8 @@ export const actions = {
     if (supportsStorage) {
       localStorage.setItem('map_center', JSON.stringify(center))
     }
+  },
+  setBounds ({ commit }, { bounds }) {
+    commit('SET_BOUNDS', { bounds })
   },
 }
