@@ -25,6 +25,8 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::get('places', 'PlaceController@getForArea');
     Route::post('places', 'PlaceController@store');
+
+    Route::get('categories', 'CategoryController@index');
 });
 
 Route::group(['middleware' => 'guest:api'], function () {
