@@ -18,7 +18,23 @@
               :key="place.id"
               :lat-lng="[place.point.lat, place.point.lng]"
             >
-              <LPopup v-if="place.comment !== null" :content="place.comment"/>
+              <LPopup>
+                <div class="mb-3">
+                  <strong>Добавлено:</strong> {{ place.created_at_readable }}
+                  <br>
+                  <span v-for="cat in place.categories"
+                        :key="cat.id"
+                        class="badge badge-info mr-1">
+                    {{ cat.name }}
+                  </span>
+                </div>
+                <div v-if="place.comment">
+                  {{ place.comment }}
+                </div>
+                <div v-else>
+                  Нет комментария к данному месту
+                </div>
+              </LPopup>
             </LMarker>
             <LTileLayer :url="url"/>
           </LMap>
