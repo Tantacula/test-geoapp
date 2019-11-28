@@ -24,7 +24,10 @@ class PlaceResource extends JsonResource
                     'name' => $this->user->name,
                 ];
             }),
-            'point'               => $this->point,
+            'point'               => [
+                'lat' => $this->point->getLat(),
+                'lng' => $this->point->getLng(),
+            ],
             'comment'             => $this->comment,
             'created_at_readable' => $this->created_at_readable,
         ];
