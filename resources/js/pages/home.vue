@@ -1,7 +1,5 @@
 <template>
-  <card :title="$t('home')">
     <Map/>
-  </card>
 </template>
 
 <script>

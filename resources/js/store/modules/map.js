@@ -1,4 +1,5 @@
 import { supportsLocalStorage } from '~/helpers/helpers'
+import axios from 'axios'
 
 const supportsStorage = supportsLocalStorage()
 let zoom = 5
@@ -16,6 +17,7 @@ export const state = {
   center,
   bounds: [],
   places: [],
+  categories: [],
 }
 
 export const getters = {
@@ -23,6 +25,7 @@ export const getters = {
   center: state => state.center,
   bounds: state => state.bounds,
   places: state => state.places,
+  categories: state => state.categories,
 }
 
 export const mutations = {
@@ -40,6 +43,9 @@ export const mutations = {
   },
   ADD_PLACE (state, { place }) {
     state.places.push(place)
+  },
+  SET_CATEGORIES (state, { categories }) {
+    state.categories = categories
   },
 }
 
@@ -64,5 +70,12 @@ export const actions = {
   },
   addPlace ({ commit }, { place }) {
     commit('ADD_PLACE', { place })
+  },
+  setCategories ({ commit }, { categories }) {
+    commit('SET_CATEGORIES', { categories })
+  },
+  async fetchCategories ({ commit }) {
+    let { data: { data: categories } } = await axios.get('/api/categories')
+    commit('SET_CATEGORIES', { categories })
   },
 }
