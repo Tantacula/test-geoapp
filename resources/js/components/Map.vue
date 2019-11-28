@@ -9,6 +9,11 @@
           @update:bounds="boundsUpdated"
           @ready="mapLoaded"
     >
+      <LMarker
+        v-for="place in places"
+        :key="place.id"
+        :lat-lng="[place.point.lat, place.point.lng]"
+      />
       <lTileLayer :url="url"/>
     </LMap>
   </div>
@@ -18,7 +23,7 @@
 import axios from 'axios'
 import { debounce } from 'lodash-es'
 import { mapGetters, mapActions } from 'vuex'
-import { LMap, LTileLayer } from 'vue2-leaflet'
+import { LMap, LTileLayer, LMarker } from 'vue2-leaflet'
 
 export default {
   name: 'Map',
@@ -26,6 +31,7 @@ export default {
   components: {
     LMap,
     LTileLayer,
+    LMarker,
   },
 
   data: () => ({
@@ -36,10 +42,11 @@ export default {
     zoom: 'map/zoom',
     center: 'map/center',
     bounds: 'map/bounds',
+    places: 'map/places',
   }),
 
   watch: {
-    async bounds (val, oldVal) {
+    bounds (val, oldVal) {
       if (val && 'from' in val && 'to' in val) {
         this.updatePlacesList(val.from, val.to)
       }
@@ -66,7 +73,7 @@ export default {
     }, 400),
     async loadPlacesList () {
       let { from: pointSW, to: pointNE } = this.bounds
-      let { data } = await axios.get('/api/places', {
+      let { data: { data: places } } = await axios.get('/api/places', {
         params: {
           pointSW,
           pointNE,
@@ -79,6 +86,7 @@ export default {
       setZoom: 'map/setZoom',
       setCenter: 'map/setCenter',
       setBounds: 'map/setBounds',
+      setPlaces: 'map/setPlaces',
     }),
   },
 }

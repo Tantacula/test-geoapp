@@ -15,12 +15,14 @@ export const state = {
   zoom,
   center,
   bounds: [],
+  places: [],
 }
 
 export const getters = {
   zoom: state => state.zoom,
   center: state => state.center,
   bounds: state => state.bounds,
+  places: state => state.places,
 }
 
 export const mutations = {
@@ -32,6 +34,9 @@ export const mutations = {
   },
   SET_BOUNDS (state, { bounds }) {
     state.bounds = bounds
+  },
+  SET_PLACES (state, { places }) {
+    state.places = places
   },
 }
 
@@ -50,5 +55,8 @@ export const actions = {
   },
   setBounds ({ commit }, { bounds }) {
     commit('SET_BOUNDS', { bounds })
+  },
+  setPlaces ({ commit }, { places }) {
+    commit('SET_PLACES', { places })
   },
 }
