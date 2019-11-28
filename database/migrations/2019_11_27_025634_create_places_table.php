@@ -17,7 +17,7 @@ class CreatePlacesTable extends Migration
             $table->bigIncrements('id');
             $table->point('point');
             $table->unsignedBigInteger('user_id');
-            $table->string('comment');
+            $table->string('comment')->nullable();
 
             $table->timestamps();
 

@@ -22,6 +22,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::patch('settings/profile', 'Settings\ProfileController@update');
     Route::patch('settings/password', 'Settings\PasswordController@update');
+
+    Route::get('places', 'PlaceController@getForArea');
+    Route::post('places', 'PlaceController@store');
 });
 
 Route::group(['middleware' => 'guest:api'], function () {
