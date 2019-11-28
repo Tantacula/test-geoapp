@@ -11,7 +11,7 @@
                 @update:center="centerUpdated"
                 @update:bounds="boundsUpdated"
                 @ready="mapLoaded"
-                @click="mapClick"
+                @click="mapClickHandler"
           >
             <LMarker
               v-for="place in selectedPlaces"
@@ -39,18 +39,77 @@
               class="custom-control-input"
               type="checkbox"
             />
-            <label :for="'MapCategory-' + category.id" class="custom-control-label my-auto">{{ category.name }}</label>
+            <label :for="'MapCategory-' + category.id" class="custom-control-label my-auto">
+              {{ category.name }}
+            </label>
           </div>
         </card>
 
         <MapPlaceSelector
-          :is-active="addPointMode"
-          @selectionStart="addPointMode = true"
-          @selectionCancel="addPointMode = false"
+          :is-active="addPlaceMode"
+          @selectionStart="addPlaceMode = true"
+          @selectionCancel="addPlaceMode = false"
         />
       </div>
-
     </div>
+
+    <b-modal
+      id="MapPlaceCreateModal"
+      title="Выберите категории"
+      @hidden="resetNewPlaceData"
+    >
+      <div class="form-group">
+        <div
+          v-for="category in categories"
+          :key="category.id"
+          class="custom-control custom-checkbox d-flex"
+        >
+          <input
+            :id="'NewPlaceCategory-' + category.id"
+            v-model="newPlaceCategories"
+            :value="category.id"
+            class="custom-control-input"
+            type="checkbox"
+          />
+          <label :for="'NewPlaceCategory-' + category.id" class="custom-control-label my-auto">
+            {{ category.name }}
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Комментарий</label>
+        <b-form-textarea
+          id="textarea-state"
+          v-model="newPlaceComment"
+          placeholder="Добавьте комментарий, если необходимо"
+          rows="3"
+        ></b-form-textarea>
+      </div>
+
+      <template v-slot:modal-footer>
+        <button
+          class="btn btn-primary"
+          :disabled="!newPlaceDataValid"
+          @click="submitNewPlace"
+        >
+          <template v-if="newPlaceDataValid">
+            Добавить
+          </template>
+          <template v-else-if="newPlaceCategories.length === 0">
+            Выберите категории
+          </template>
+          <template v-else-if="!newPlaceCoordinates">
+            Не выбрана координата
+          </template>
+        </button>
+        <button
+          class="btn btn-danger"
+          @click="resetNewPlaceData"
+        >
+          Отмена
+        </button>
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -75,7 +134,10 @@ export default {
   data: () => ({
     url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
     selectedCategoryIds: [],
-    addPointMode: false,
+    addPlaceMode: false,
+    newPlaceCoordinates: null,
+    newPlaceCategories: [],
+    newPlaceComment: null,
   }),
 
   computed: {
@@ -84,9 +146,12 @@ export default {
     },
     selectedPlaces () {
       return this.places.filter(place => {
-        let catIds = place.categories.map(cat => cat.id)
-        return intersection(this.selectedCategoryIds, catIds).length > 0
+        let placeCatIds = place.categories.map(cat => cat.id)
+        return intersection(this.selectedCategoryIds, placeCatIds).length > 0
       })
+    },
+    newPlaceDataValid () {
+      return (!!this.newPlaceCoordinates && this.newPlaceCategories.length > 0)
     },
     ...mapGetters({
       zoom: 'map/zoom',
@@ -131,10 +196,18 @@ export default {
       const { _southWest: pointSW, _northEast: pointNE } = mapObject.getBounds()
       this.setBounds({ bounds: { pointSW, pointNE } })
     },
-    mapClick ({ latlng }) {
-      if (this.addPointMode) {
-        console.log('map click', latlng)
+    mapClickHandler ({ latlng }) {
+      if (this.addPlaceMode) {
+        this.newPlaceCoordinates = latlng
+        this.$bvModal.show('MapPlaceCreateModal')
       }
+    },
+    resetNewPlaceData () {
+      this.addPlaceMode = false
+      this.newPlaceCoordinates = null
+      this.newPlaceCategories = []
+      this.newPlaceComment = null
+      this.$bvModal.hide('MapPlaceCreateModal')
     },
     updatePlacesList: debounce.call(this, function () {
       this.loadPlacesList()
@@ -149,8 +222,20 @@ export default {
       })
       this.setPlaces({ places })
     },
+    submitNewPlace: debounce.call(this, function () {
+      if (!this.newPlaceDataValid) {
+        return
+      }
+      this.sendPointToServer({
+        lat: this.newPlaceCoordinates.lat,
+        lng: this.newPlaceCoordinates.lng,
+        categories: this.newPlaceCategories,
+        comment: this.newPlaceComment,
+      })
+      this.$bvModal.hide('MapPlaceCreateModal')
+    }, 100),
     async sendPointToServer ({ lat, lng, categories, comment }) {
-      const { data: { place } } = await axios.post('/api/places', {
+      const { data: { data: place } } = await axios.post('/api/places', {
         lat,
         lng,
         categories,
