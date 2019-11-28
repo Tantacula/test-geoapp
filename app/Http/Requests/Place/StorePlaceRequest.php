@@ -24,9 +24,10 @@ class StorePlaceRequest extends FormRequest
     public function rules()
     {
         return [
-            'lat'        => 'required|numeric',
-            'lng'        => 'required|numeric',
-            'categories' => 'required|array',
+            'lat'          => 'required|numeric',
+            'lng'          => 'required|numeric',
+            'categories'   => 'required|array',
+            'categories.*' => 'exists:categories,id'
         ];
     }
 }
