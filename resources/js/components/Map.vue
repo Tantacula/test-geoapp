@@ -79,14 +79,23 @@ export default {
           pointNE,
         },
       })
-      // todo: Добавить точки в store
-      console.log(data)
+      this.setPlaces({ places })
+    },
+    async sendPointToServer ({ lat, lng, categories, comment }) {
+      const { data: { place } } = await axios.post('/api/places', {
+        lat,
+        lng,
+        categories,
+        comment,
+      })
+      this.addPlace({ place })
     },
     ...mapActions({
       setZoom: 'map/setZoom',
       setCenter: 'map/setCenter',
       setBounds: 'map/setBounds',
       setPlaces: 'map/setPlaces',
+      addPlace: 'map/addPlace',
     }),
   },
 }

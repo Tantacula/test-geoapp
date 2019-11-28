@@ -38,6 +38,9 @@ export const mutations = {
   SET_PLACES (state, { places }) {
     state.places = places
   },
+  ADD_PLACE (state, { place }) {
+    state.places.push(place)
+  },
 }
 
 export const actions = {
@@ -58,5 +61,8 @@ export const actions = {
   },
   setPlaces ({ commit }, { places }) {
     commit('SET_PLACES', { places })
+  },
+  addPlace ({ commit }, { place }) {
+    commit('ADD_PLACE', { place })
   },
 }
