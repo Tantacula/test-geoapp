@@ -6,6 +6,7 @@ use App\Helpers\GeometryHelpers;
 use App\Http\Requests\Place\GetPlacesForAreaRequest;
 use App\Http\Requests\Place\StorePlaceRequest;
 use App\Http\Resources\PlaceCollection;
+use App\Http\Resources\PlaceResource;
 use App\Models\Place;
 use App\Types\Point;
 use \Grimzy\LaravelMysqlSpatial\Types\Point as DbSpatialPoint;
@@ -14,6 +15,9 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class PlaceController extends Controller
 {
+    /**
+     * @var Place
+     */
     private $place;
 
     /**
@@ -53,17 +57,22 @@ class PlaceController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      *
-     * @return \Illuminate\Http\Response|array
+     * @return \Illuminate\Http\Response|PlaceResource
      */
-    public function store(StorePlaceRequest $request): array
+    public function store(StorePlaceRequest $request): PlaceResource
     {
+        /** @var Place $place */
         $place = new $this->place;
         $place->point = new DbSpatialPoint($request->get('lat'), $request->get('lng'));
         $place->user_id = auth()->user()->id;
         $place->comment = $request->get('comment');
         $place->save();
 
-        return compact('place');
+        $place->categories()->attach($request->get('categories'));
+
+        $place->load('user', 'categories');
+
+        return new PlaceResource($place);
     }
 
     /**
