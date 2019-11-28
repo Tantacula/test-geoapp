@@ -90,8 +90,8 @@ export default {
 
   watch: {
     bounds (val, oldVal) {
-      if (val && 'from' in val && 'to' in val) {
-        this.updatePlacesList(val.from, val.to)
+      if (val && 'pointNE' in val && 'pointSW' in val) {
+        this.updatePlacesList()
       }
     },
     categories (val, oldVal) {
@@ -105,8 +105,6 @@ export default {
     } else {
       this.fillSelectedCategories()
     }
-
-
   },
 
   methods: {
@@ -117,8 +115,8 @@ export default {
       this.setCenter({ center })
     },
     boundsUpdated (bounds) {
-      const { _southWest: from, _northEast: to } = bounds
-      this.setBounds({ bounds: { from, to } })
+      const { _southWest: pointSW, _northEast: pointNE } = bounds
+      this.setBounds({ bounds: { pointSW, pointNE } })
     },
     mapLoaded (mapObject) {
       const { _southWest: pointSW, _northEast: pointNE } = mapObject.getBounds()
@@ -131,7 +129,7 @@ export default {
       this.loadPlacesList()
     }, 400),
     async loadPlacesList () {
-      let { from: pointSW, to: pointNE } = this.bounds
+      let { pointSW, pointNE } = this.bounds
       let { data: { data: places } } = await axios.get('/api/places', {
         params: {
           pointSW,
