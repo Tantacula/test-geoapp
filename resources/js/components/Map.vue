@@ -26,7 +26,7 @@
       </div>
 
       <div class="col-12 col-lg-4">
-        <card title="Категории">
+        <card title="Категории" class="mb-4">
           <div
             v-for="category in categories"
             :key="category.id"
@@ -42,6 +42,12 @@
             <label :for="'MapCategory-' + category.id" class="custom-control-label my-auto">{{ category.name }}</label>
           </div>
         </card>
+
+        <MapPlaceSelector
+          :is-active="addPointMode"
+          @selectionStart="addPointMode = true"
+          @selectionCancel="addPointMode = false"
+        />
       </div>
 
     </div>
@@ -53,6 +59,7 @@ import axios from 'axios'
 import { debounce, intersection } from 'lodash-es'
 import { mapGetters, mapActions } from 'vuex'
 import { LMap, LTileLayer, LMarker, LPopup } from 'vue2-leaflet'
+import MapPlaceSelector from '~/components/MapPlaceSelector'
 
 export default {
   name: 'Map',
@@ -62,11 +69,13 @@ export default {
     LTileLayer,
     LMarker,
     LPopup,
+    MapPlaceSelector,
   },
 
   data: () => ({
     url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
     selectedCategoryIds: [],
+    addPointMode: false,
   }),
 
   computed: {
@@ -75,7 +84,7 @@ export default {
     },
     selectedPlaces () {
       return this.places.filter(place => {
-        let catIds = place.categories.map(cat => cat.id);
+        let catIds = place.categories.map(cat => cat.id)
         return intersection(this.selectedCategoryIds, catIds).length > 0
       })
     },
@@ -122,8 +131,10 @@ export default {
       const { _southWest: pointSW, _northEast: pointNE } = mapObject.getBounds()
       this.setBounds({ bounds: { pointSW, pointNE } })
     },
-    mapClick (e) {
-      console.log('map click', e)
+    mapClick ({ latlng }) {
+      if (this.addPointMode) {
+        console.log('map click', latlng)
+      }
     },
     updatePlacesList: debounce.call(this, function () {
       this.loadPlacesList()
