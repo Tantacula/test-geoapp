@@ -42,7 +42,7 @@ class PlaceController extends Controller
 
         return new PlaceCollection(
             $this->place
-                ->with('user')
+                ->with('user', 'categories')
                 ->within('point', $polygon)
                 ->get()
         );

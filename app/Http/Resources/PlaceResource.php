@@ -29,6 +29,7 @@ class PlaceResource extends JsonResource
                 'lng' => $this->point->getLng(),
             ],
             'comment'             => $this->comment,
+            'categories'          => CategoryResource::collection($this->whenLoaded('categories')),
             'created_at_readable' => $this->created_at_readable,
         ];
     }
