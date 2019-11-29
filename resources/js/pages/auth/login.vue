@@ -25,9 +25,12 @@
           <div class="form-group row">
             <div class="col-md-3" />
             <div class="col-md-7 d-flex">
-              <checkbox v-model="remember" name="remember">
+              <b-form-checkbox
+                v-model="remember"
+                name="remember"
+              >
                 {{ $t('remember_me') }}
-              </checkbox>
+              </b-form-checkbox>
 
               <router-link :to="{ name: 'password.request' }" class="small ml-auto my-auto">
                 {{ $t('forgot_password') }}

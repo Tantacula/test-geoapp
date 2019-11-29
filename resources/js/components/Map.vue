@@ -25,22 +25,15 @@
 
       <div class="col-12 col-lg-4">
         <card title="Категории" class="mb-4">
-          <div
+          <b-form-checkbox
             v-for="category in categories"
             :key="category.id"
-            class="custom-control custom-checkbox d-flex"
+            :id="'MapCategory-' + category.id"
+            v-model="selectedCategoryIds"
+            :value="category.id"
           >
-            <input
-              :id="'MapCategory-' + category.id"
-              v-model="selectedCategoryIds"
-              :value="category.id"
-              class="custom-control-input"
-              type="checkbox"
-            />
-            <label :for="'MapCategory-' + category.id" class="custom-control-label my-auto">
-              {{ category.name }}
-            </label>
-          </div>
+            {{ category.name }}
+          </b-form-checkbox>
         </card>
 
         <MapPlaceSelector
