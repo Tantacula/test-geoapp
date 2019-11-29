@@ -22,7 +22,7 @@ services:
   php-cli:
     build:
       context: ./php-fpm
-    command: sh -c "composer install --optimize-autoloader --no-dev --no-interaction && php artisan migrate --force && php artisan db:seed --force && php artisan config:cache && php artisan route:cache"
+    command: sh -c "composer install --optimize-autoloader --no-dev --no-interaction && php artisan migrate --force && php artisan db:seed --force"
     volumes:
       - ./php-fpm/php7.3.ini:/usr/local/etc/php/php.ini
       - ${APP_CODE_PATH_HOST}:/var/www
