@@ -15,6 +15,8 @@ class CreatePlacesTable extends Migration
     {
         Schema::create('places', function (Blueprint $table) {
             $table->bigIncrements('id');
+            // srid не работает в Mysql 5.7 и менее
+            // $table->point('point', 4326);
             $table->point('point');
             $table->unsignedBigInteger('user_id');
             $table->string('comment')->nullable();
