@@ -13,29 +13,11 @@
                 @ready="mapLoaded"
                 @click="mapClickHandler"
           >
-            <LMarker
+            <MapMarker
               v-for="place in selectedPlaces"
               :key="place.id"
-              :lat-lng="[place.point.lat, place.point.lng]"
-            >
-              <LPopup>
-                <div class="mb-3">
-                  <strong>Добавлено:</strong> {{ place.created_at_readable }}
-                  <br>
-                  <span v-for="cat in place.categories"
-                        :key="cat.id"
-                        class="badge badge-info mr-1">
-                    {{ cat.name }}
-                  </span>
-                </div>
-                <div v-if="place.comment">
-                  {{ place.comment }}
-                </div>
-                <div v-else>
-                  Нет комментария к данному месту
-                </div>
-              </LPopup>
-            </LMarker>
+              :place="place"
+            />
             <LTileLayer :url="url"/>
           </LMap>
         </card>
@@ -133,8 +115,9 @@
 import axios from 'axios'
 import { debounce, intersection } from 'lodash-es'
 import { mapGetters, mapActions } from 'vuex'
-import { LMap, LTileLayer, LMarker, LPopup } from 'vue2-leaflet'
+import { LMap, LTileLayer } from 'vue2-leaflet'
 import MapPlaceSelector from '~/components/MapPlaceSelector'
+import MapMarker from '~/components/MapMarker'
 
 export default {
   name: 'Map',
@@ -142,8 +125,7 @@ export default {
   components: {
     LMap,
     LTileLayer,
-    LMarker,
-    LPopup,
+    MapMarker,
     MapPlaceSelector,
   },
 
