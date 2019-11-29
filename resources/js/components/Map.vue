@@ -27,8 +27,8 @@
         <card title="Категории" class="mb-4">
           <b-form-checkbox
             v-for="category in categories"
-            :key="category.id"
             :id="'MapCategory-' + category.id"
+            :key="category.id"
             v-model="selectedCategoryIds"
             :value="category.id"
           >
@@ -50,22 +50,15 @@
       @hidden="resetNewPlaceData"
     >
       <div class="form-group">
-        <div
+        <b-form-checkbox
           v-for="category in categories"
+          :id="'NewPlaceCategory-' + category.id"
           :key="category.id"
-          class="custom-control custom-checkbox d-flex"
+          v-model="newPlaceCategories"
+          :value="category.id"
         >
-          <input
-            :id="'NewPlaceCategory-' + category.id"
-            v-model="newPlaceCategories"
-            :value="category.id"
-            class="custom-control-input"
-            type="checkbox"
-          />
-          <label :for="'NewPlaceCategory-' + category.id" class="custom-control-label my-auto">
-            {{ category.name }}
-          </label>
-        </div>
+          {{ category.name }}
+        </b-form-checkbox>
       </div>
       <div class="form-group">
         <label>Комментарий</label>
