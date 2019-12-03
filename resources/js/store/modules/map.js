@@ -12,13 +12,13 @@ if (supportsStorage && localStorage.getItem('map_center')) {
   center = JSON.parse(localStorage.getItem('map_center'))
 }
 
-export const state = {
+export const state = () => ({
   zoom,
   center,
   bounds: [],
   places: [],
   categories: [],
-}
+})
 
 export const getters = {
   zoom: state => state.zoom,

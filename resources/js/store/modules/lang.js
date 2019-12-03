@@ -4,22 +4,22 @@ import * as types from '../mutation-types'
 const { locale, locales } = window.config
 
 // state
-export const state = {
+export const state = () => ({
   locale: Cookies.get('locale') || locale,
-  locales: locales
-}
+  locales: locales,
+})
 
 // getters
 export const getters = {
   locale: state => state.locale,
-  locales: state => state.locales
+  locales: state => state.locales,
 }
 
 // mutations
 export const mutations = {
   [types.SET_LOCALE] (state, { locale }) {
     state.locale = locale
-  }
+  },
 }
 
 // actions
@@ -28,5 +28,5 @@ export const actions = {
     commit(types.SET_LOCALE, { locale })
 
     Cookies.set('locale', locale, { expires: 365 })
-  }
+  },
 }

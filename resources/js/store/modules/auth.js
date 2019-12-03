@@ -3,10 +3,10 @@ import Cookies from 'js-cookie'
 import * as types from '../mutation-types'
 
 // state
-export const state = {
+export const state = () => ({
   user: null,
   token: Cookies.get('token')
-}
+})
 
 // getters
 export const getters = {
